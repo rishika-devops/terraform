@@ -1,24 +1,6 @@
-data "aws_ami" "centos8" {
-    owners = ["973714476881"]
-    most_recent      = true
 
-    filter {
-        name   = "name"
-        values = ["Centos-8-DevOps-Practice"]
-    }
-
-    filter {
-        name   = "root-device-type"
-        values = ["ebs"]
-    }
-
-    filter {
-        name   = "virtualization-type"
-        values = ["hvm"]
-    }
-}
 resource "aws_instance" "web" {
-  ami           = data.aws_ami.centos8.id
+  ami           = "ami-0b4f379183e5706b9"
   instance_type = "t3.micro"
   vpc_security_group_ids = [aws_security_group.sg1.id]
 
@@ -28,16 +10,16 @@ resource "aws_instance" "web" {
 }
 
 resource "aws_security_group" "sg1" {
-  name        = "sg"
-  description = "Allow TLS inbound traffic"
+  name        = var.sg_name
+  description = var.sg_description
   #vpc_id      = aws_vpc.main.id
 
   ingress {
     description = "TLS from VPC"
-    from_port   = 0
+    from_port   = var.from_port
     to_port     = 0
     protocol    = "tcp"
-    cidr_blocks = [0.0.0.0/0]
+    cidr_blocks = var.cidr_blocks
   }
 
   egress {
